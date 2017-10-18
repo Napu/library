@@ -22,9 +22,14 @@ function library_bookShelf(){
 	//going throw rows
 	for($row = 0;$row<$rows;$row ++){
 		for($column=0;$column<$columns;$column++){
-			$url = new moodle_url("reserve.php",array('id'=>$books[$column+1]->id));
-			$button = $OUTPUT->single_button($url,"Reservar");
-			$bookname[$column]=$books[$column+1]->name."<br> Stock: ".$books[$column+1]->stock."   ".$button;
+			$stock = $books[$column+1]->stock;
+			if($stock = 0){
+				$bookname[$column]=$books[$column+1]->name."<br> Stock: ".$books[$column+1]->stock."   No quedan copias por reservar";
+			}else{
+				$url = new moodle_url("reserve.php",array('id'=>$books[$column+1]->id));
+				$button = $OUTPUT->single_button($url,"Reservar");
+				$bookname[$column]=$books[$column+1]->name."<br> Stock: ".$books[$column+1]->stock."   ".$button;
+			}
 		}
 	}
 	$table->data[]=$bookname;
