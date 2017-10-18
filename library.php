@@ -50,7 +50,7 @@ if($reservation=1 && $bookid!= 0){
 	$validation = $DB->get_record("local_library", array("bookid"=>$bookid, "userid"=>$USER->id));
 	if($validation != false){
 		$now = strtotime(date("d-m-Y"));
-		$reservation_expires = $validation -> date + (3*24*60*60);
+		$reservation_expires = $validation -> date + 259200;
 		if($reservation_expires > $now){
 			echo "Ya tienes reservado este libro";
 			$url = new moodle_url("library.php");

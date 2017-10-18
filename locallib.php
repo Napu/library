@@ -23,7 +23,7 @@ function library_bookShelf(){
 	for($row = 0;$row<$rows;$row ++){
 		for($column=0;$column<$columns;$column++){
 			$stock = $books[$column+1]->stock;
-			if($stock = 0){
+			if($stock == "0"){
 				$bookname[$column]=$books[$column+1]->name."<br> Stock: ".$books[$column+1]->stock."   No quedan copias por reservar";
 			}else{
 				$url = new moodle_url("reserve.php",array('id'=>$books[$column+1]->id));
