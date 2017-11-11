@@ -17,7 +17,7 @@ function library_bookShelf(){
 		$rows=1;
 	}else{
 		$rows =round($columns/4);
-	}
+	} 
 	//going throw rows
 	for($row = 0;$row<$rows;$row ++){
 		for($column=0;$column<$columns;$column++){

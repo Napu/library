@@ -49,7 +49,7 @@ echo $OUTPUT->header ();
 $form_buscar = new formBuscarLibro ( null );
 echo $form_buscar->display ();
 if($fromform = $form_buscar->get_data ()){
-	//Get books ids matching the form inputs
+	//Get books ids matching the form inputs 
 	$booksid = library_get_books_fromform($fromform);
 	Var_dump($booksid);die();
 	

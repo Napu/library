@@ -33,7 +33,7 @@ global $DB, $USER, $CFG;
 $bookid = required_param('id', PARAM_INT);
 
 require_login();
-
+ 
 $baseurl = new moodle_url ( '/local/library/reserve.php' );
 $context = context_system::instance ();
 $PAGE->set_context ( $context );
