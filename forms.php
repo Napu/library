@@ -18,7 +18,7 @@ class formBuscarLibro extends moodleform {
 		}
 
 		$select=$mform->addElement('select', 'Tag', "Elige un tema:",$tagarray);
-		$mform->addElement('text', 'Autor', "Autor:");
+ 		$mform->addElement('text', 'Autor', "Autor:");
 		$mform->setType('Autor', PARAM_TEXT);
 		$mform->addElement('text', 'Nombre', "Nombre:");
 		$mform->setType('Nombre', PARAM_TEXT);
