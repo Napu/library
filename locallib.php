@@ -149,3 +149,34 @@ function library_get_books_fromform($fromform){
 	$booksid = array_unique(array_not_unique($id));
 	return $booksid;
 }
+function library_filtered_bookshelf($booksids){
+	global $DB, $USER, $CFG, $OUTPUT;
+	
+	$table = new html_table();
+	$rows = round(count($booksids)/4,0)+1;
+	$maxcol = 4;
+	if($rows<$maxcol) {
+		$cols = $rows;
+	}else{
+		$cols= $maxcol;
+	}
+	$bookname = array();
+	for($row=0;$row<$rows;$row++){
+		for ($col=0; $col<$cols;$col++){
+			$book = $DB->get_record("local_library_book",array("id"=>intval($booksids[$col])));
+			//var_dump($book);die();
+			$stock = $book->stock;
+			if($stock == "0"){
+				$bookname[$col]=$book->name."<br> Stock: ".$book->stock."   No quedan copias por reservar";
+			}else{
+				$url = new moodle_url("reserve.php",array('id'=>$book->id));
+				$button = $OUTPUT->single_button($url,"Reservar");
+				$bookname[$col]=$book->name."<br> Stock: ".$book->stock."   ".$button;
+			}
+		}
+		
+	}
+	$table->data[]= $bookname;
+	return $table;
+	
+}

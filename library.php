@@ -49,10 +49,13 @@ echo $OUTPUT->header ();
 $form_buscar = new formBuscarLibro ( null );
 echo $form_buscar->display ();
 if($fromform = $form_buscar->get_data ()){
+	echo $OUTPUT->heading ( "Resultados de la Busqueda" );
 	//Get books ids matching the form inputs 
 	$booksid = library_get_books_fromform($fromform);
-	Var_dump($booksid);die();
-	
+	//Var_dump($booksid);die();
+	$shelf = library_filtered_bookshelf($booksid);
+	$print_table = html_writer:: table($shelf);
+	echo $print_table;
 	
 	echo $OUTPUT->footer ();
 	die();
