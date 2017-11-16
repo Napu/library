@@ -146,8 +146,13 @@ function library_get_books_fromform($fromform){
 			$id[]=$editorialid->id;
 		}
 	}
-	$booksid = array_unique(array_not_unique($id));
-	return $booksid;
+	if(array_not_unique($id)){
+		$booksid = array_unique(array_not_unique($id));
+		return $booksid;	
+	}else{
+		return $id;
+	}
+	
 }
 function library_filtered_bookshelf($booksids){
 	global $DB, $USER, $CFG, $OUTPUT;
@@ -163,7 +168,7 @@ function library_filtered_bookshelf($booksids){
 	$bookname = array();
 	for($row=0;$row<$rows;$row++){
 		for ($col=0; $col<$cols;$col++){
-			$book = $DB->get_record("local_library_book",array("id"=>intval($booksids[$col])));
+			$book = $DB->get_record("local_library_book",array("id"=>$booksids[$col]));
 			//var_dump($book);die();
 			$stock = $book->stock;
 			if($stock == "0"){
@@ -180,3 +185,103 @@ function library_filtered_bookshelf($booksids){
 	return $table;
 	
 }
+
+/*function librarian_tabs($context, $cm, $emarking, $draft=null) {
+	global $CFG, $USER;
+	$usercangrade = has_capability("mod/emarking:grade", $context);
+	$issupervisor = has_capability("mod/emarking:supervisegrading", $context);
+	$tabs = array();
+	// Print tab.
+	$printtab = new tabobject('printscan', $CFG->wwwroot . "/mod/emarking/print/exam.php?id={$cm->id}", $emarking->type == EMARKING_TYPE_PRINT_ONLY ? get_string('print', 'mod_emarking') : get_string('type_print_scan', 'mod_emarking'));
+	// Print summary tab.
+	$printtab->subtree[] = new tabobject('myexams', $CFG->wwwroot . "/mod/emarking/print/exam.php?id={$cm->id}", get_string('exam', 'mod_emarking'));
+	// Scan tab.
+	$scantab = new tabobject("scan", $CFG->wwwroot . "/mod/emarking/view.php?id={$cm->id}&scan=1", get_string('exams', 'mod_emarking'));
+	$scanlist = new tabobject("scanlist", $CFG->wwwroot . "/mod/emarking/view.php?id={$cm->id}&scan=1", get_string('view'));
+	$uploadanswers = new tabobject("uploadanswers", $CFG->wwwroot . "/mod/emarking/print/uploadanswers.php?id={$cm->id}", get_string('uploadanswers', 'mod_emarking'));
+	$orphanpages = new tabobject('orphanpages', $CFG->wwwroot . "/mod/emarking/print/orphanpages.php?id={$cm->id}", get_string('orphanpages', 'mod_emarking'));
+	$scantab->subtree[] = $scanlist;
+	if ($usercangrade && $issupervisor && $emarking->type != EMARKING_TYPE_PRINT_ONLY
+	&& $emarking->uploadtype == EMARKING_UPLOAD_QR) {
+		$printtab->subtree[] = $uploadanswers;
+		$printtab->subtree[] = $orphanpages;
+	}
+	// Grade tab.
+	$markingtab = new tabobject("grade", $CFG->wwwroot . "/mod/emarking/view.php?id={$cm->id}", get_string('onscreenmarking', 'mod_emarking'));
+	$markingtab->subtree[] = new tabobject("mark", $CFG->wwwroot . "/mod/emarking/view.php?id={$cm->id}", get_string("marking", 'mod_emarking'));
+	$regradestab = new tabobject("regrades", $CFG->wwwroot . "/mod/emarking/marking/regraderequests.php?id={$cm->id}", get_string("regrades", 'mod_emarking'));
+	if (!$usercangrade) {
+		if ($emarking->peervisibility) {
+			$markingtab->subtree[] = new tabobject("ranking", $CFG->wwwroot . "/mod/emarking/reports/ranking.php?id={$cm->id}", get_string("ranking", 'mod_emarking'));
+			$markingtab->subtree[] = new tabobject("viewpeers", $CFG->wwwroot . "/mod/emarking/reports/viewpeers.php?id={$cm->id}", get_string("reviewpeersfeedback", 'mod_emarking'));
+		}
+		if ($emarking->type == EMARKING_TYPE_ON_SCREEN_MARKING && $draft != null && $draft->status >= EMARKING_STATUS_PUBLISHED) {
+			$markingtab->subtree[] = $regradestab;
+		}
+	} else {
+		if (has_capability('mod/emarking:regrade', $context) && $emarking->type == EMARKING_TYPE_ON_SCREEN_MARKING) {
+			$markingtab->subtree[] = $regradestab;
+		}
+	}
+	// Settings tab.
+	$settingstab = new tabobject("settings", $CFG->wwwroot . "/mod/emarking/marking/settings.php?id={$cm->id}", get_string('settings'));
+	// Settings for marking.
+	if ($emarking->type == EMARKING_TYPE_ON_SCREEN_MARKING) {
+		$settingstab->subtree[] = new tabobject("osmsettings", $CFG->wwwroot . "/mod/emarking/marking/settings.php?id={$cm->id}", get_string("marking", 'mod_emarking'));
+		$settingstab->subtree[] = new tabobject("comment", $CFG->wwwroot . "/mod/emarking/marking/predefinedcomments.php?id={$cm->id}&action=list", get_string("predefinedcomments", 'mod_emarking'));
+		if (has_capability('mod/emarking:assignmarkers', $context)) {
+			$settingstab->subtree[] = new tabobject("markers", $CFG->wwwroot . "/mod/emarking/marking/markers.php?id={$cm->id}", get_string("markerspercriteria", 'mod_emarking'));
+			$settingstab->subtree[] = new tabobject("pages", $CFG->wwwroot . "/mod/emarking/marking/pages.php?id={$cm->id}", core_text::strtotitle(get_string("pagespercriteria", 'mod_emarking')));
+			$settingstab->subtree[] = new tabobject("outcomes", $CFG->wwwroot . "/mod/emarking/marking/outcomes.php?id={$cm->id}", core_text::strtotitle(get_string("outcomes", "grades")));
+			$settingstab->subtree[] = new tabobject("importrubric", $CFG->wwwroot . "/mod/emarking/marking/importrubric.php?id={$cm->id}&action=list", get_string("importrubric", 'mod_emarking'));
+			$settingstab->subtree[] = new tabobject("export", $CFG->wwwroot . "/mod/emarking/marking/export.php?id={$cm->id}", core_text::strtotitle(get_string("export", "mod_data")));
+		}
+	}
+	// Grade report tab.
+	$gradereporttab = new tabobject("gradereport", $CFG->wwwroot . "/mod/emarking/reports/feedback.php?id={$cm->id}", get_string("reports", "mod_emarking"));
+	$gradereporttab->subtree[] = new tabobject("feedback", $CFG->wwwroot . "/mod/emarking/reports/feedback.php?id={$cm->id}", get_string("feedback", "mod_emarking"));
+	$gradereporttab->subtree[] = new tabobject("report", $CFG->wwwroot . "/mod/emarking/reports/grades.php?id={$cm->id}", get_string("grades", "grades"));
+	$gradereporttab->subtree[] = new tabobject("markingreport", $CFG->wwwroot . "/mod/emarking/reports/marking.php?id={$cm->id}", get_string("marking", 'mod_emarking'));
+	$gradereporttab->subtree[] = new tabobject("ranking", $CFG->wwwroot . "/mod/emarking/reports/ranking.php?id={$cm->id}", get_string("ranking", 'mod_emarking'));
+	if ($emarking->justiceperception > EMARKING_JUSTICE_DISABLED) {
+		$gradereporttab->subtree[] = new tabobject("justicereport", $CFG->wwwroot . "/mod/emarking/reports/justice.php?id={$cm->id}", get_string("justice", 'mod_emarking'));
+	}
+	$gradereporttab->subtree[] = new tabobject("outcomesreport", $CFG->wwwroot . "/mod/emarking/reports/outcomes.php?id={$cm->id}", get_string("outcomes", "grades"));
+	// Tabs sequence.
+	if ($usercangrade) {
+		// Print tab goes always except for markers training.
+		if ($emarking->type == EMARKING_TYPE_PRINT_ONLY || $emarking->type == EMARKING_TYPE_PRINT_SCAN || $emarking->type == EMARKING_TYPE_ON_SCREEN_MARKING || $emarking->type == EMARKING_TYPE_PEER_REVIEW) {
+			if (has_capability('mod/emarking:addinstance', $context)) {
+				if (count($printtab->subtree) == 1) {
+					$tabs[] = $printtab->subtree[0];
+				} else {
+					$tabs[] = $printtab;
+				}
+			}
+		}
+		// Scan or enablescan tab.
+		if ($emarking->type == EMARKING_TYPE_PRINT_SCAN) {
+			$tabs[] = $scantab;
+		}
+		// OSM tabs, either marking, reports and settings or enable osm.
+		if ($emarking->type == EMARKING_TYPE_ON_SCREEN_MARKING || $emarking->type == EMARKING_TYPE_PEER_REVIEW) {
+			$tabs[] = $markingtab;
+			$tabs[] = $gradereporttab;
+			if ($issupervisor) {
+				$tabs[] = $settingstab;
+			}
+		}
+	} else
+	if ($emarking->type == EMARKING_TYPE_PRINT_SCAN) {
+		// This case is for students (user can not grade).
+		$tabs = $scantab->subtree;
+	} else
+	if ($emarking->type == EMARKING_TYPE_PRINT_ONLY) {
+		// This case is for students (user can not grade).
+		$tabs = array();
+	} else {
+		// This case is for students (user can not grade).
+		$tabs = $markingtab->subtree;
+	}
+	return $tabs;
+}*/
