@@ -43,10 +43,23 @@ $PAGE->set_heading ( "Virtual Library" );
 $PAGE->navbar->add ( "Librarian", 'librarian.php' );
 echo $OUTPUT->header ();
 
-echo $OUTPUT->tabtree
+echo $OUTPUT->heading ( "Elige una Opcion" );
 
+$table = new html_table();
 
+$buttons = [];
 
+$urlNewBook = new moodle_url("newbook.php");
+$buttonNewBook = $OUTPUT->single_button($urlNewBook,"Crear nuevo Libro");
+$buttons[1] = $buttonNewBook;
+
+$urlGiveBackBook = new moodle_url("giveback.php");
+$buttonGiveBackBook = $OUTPUT->single_button($urlGiveBackBook,"Devolver Libro");
+$buttons[2] = $buttonGiveBackBook;
+$table->data[]=$buttons;
+$print_table = html_writer:: table($table);
+
+echo $print_table;
 
 
 echo $OUTPUT-> footer();
