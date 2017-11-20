@@ -61,7 +61,7 @@ if($fromform = $form_buscar->get_data ()){
 	die();
 }else{
 	//Validate there is not previous reservation
-	echo library_validation($reservation, $bookid);
+	echo library_reservation_validation($reservation, $bookid);
 
 	echo $OUTPUT->heading ( "Choose your book" );
 
