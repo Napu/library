@@ -45,6 +45,7 @@ echo $OUTPUT->header ();
 
 echo $OUTPUT->heading ( "Elige una Opcion" );
 
+if(has_capability("local/library:Librarian",context_user::instance($USER->id))){
 $table = new html_table();
 
 $buttons = [];
@@ -63,3 +64,9 @@ echo $print_table;
 
 
 echo $OUTPUT-> footer();
+die();
+}else{
+	echo "<h3> No tienes permiso para ver esta pagina";
+	echo $OUTPUT-> footer();
+	die();
+}
