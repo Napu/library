@@ -52,10 +52,18 @@ if($fromform = $form_create->get_data ()){
 	$insert = library_get_new_book($fromform);
 	if($insert = true){
 		echo"<h3><br><br><br>El libro ha sido creado con exito</h3>";
+		
+		$url = new moodle_url("librarian.php");
+		echo "<br>".$OUTPUT->single_button($url,"Volver");
+		
+		
 		echo $OUTPUT->footer();
 		die();
 	}else{
 		echo "<h3><br><br><br>Hubo algun error en la creacion del nuevo libro, porfavor intetelo nuevamente</h3>";
+		$url = new moodle_url("librarian.php");
+		echo "<br>".$OUTPUT->single_button($url,"Volver");
+		
 		echo $OUTPUT->footer();
 		die();
 	}

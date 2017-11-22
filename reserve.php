@@ -53,7 +53,7 @@ echo "Quieres reservar: <br><br><h4>".$book->name."</h4><br>
 
 $url_accept = new moodle_url("library.php",array('bookid'=>$book->id, 'reserva'=>true));
 
-$url_cancel = new moodle_url("library.php",array('bookid'=>$book->id, 'reserva'=>false));
+$url_cancel = new moodle_url("library.php");
 
 $print = "<br>";
 $print .= $OUTPUT->single_button($url_cancel,"Cancelar")."			".$OUTPUT->single_button($url_accept,"Reservar");
